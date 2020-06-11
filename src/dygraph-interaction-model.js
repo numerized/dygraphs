@@ -430,6 +430,9 @@ DygraphInteraction.startTouch = function(event, g, context) {
   context.initialTouches = touches;
 
   if (touches.length == 1) {
+     // This is possbily a touchOVER, save the last touch to check
+     context.lastTouch = event;
+     // or This is just a swipe. 
     // This is just a swipe.
     context.initialPinchCenter = touches[0];
     context.touchDirections = { x: true, y: true };
@@ -475,6 +478,9 @@ DygraphInteraction.startTouch = function(event, g, context) {
 DygraphInteraction.moveTouch = function(event, g, context) {
   // If the tap moves, then it's definitely not part of a double-tap.
   context.startTimeForDoubleTapMs = null;
+
+  // clear the last touch if it's doing something else
+  context.lastTouch = null;
 
   var i, touches = [];
   for (i = 0; i < event.touches.length; i++) {
@@ -581,6 +587,13 @@ DygraphInteraction.endTouch = function(event, g, context) {
         context.doubleTapY && Math.abs(context.doubleTapY - t.screenY) < 50) {
       g.resetZoom();
     } else {
+
+      if (context.lastTouch !== null){
+        // no double-tap, pan or pinch so it's a touchOVER
+        event.isTouchOver = true;
+        g.mouseMove(event);
+      }
+      
       context.startTimeForDoubleTapMs = now;
       context.doubleTapX = t.screenX;
       context.doubleTapY = t.screenY;

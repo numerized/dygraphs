@@ -199,6 +199,7 @@ export function findPos(obj) {
  * @private
  */
 export function pageX(e) {
+  if (e.isTouchOver) return (!e.changedTouches[0] || e.changedTouches[0].pageX < 0) ? 0 : e.changedTouches[0].pageX;
   return (!e.pageX || e.pageX < 0) ? 0 : e.pageX;
 };
 
@@ -211,6 +212,7 @@ export function pageX(e) {
  * @private
  */
 export function pageY(e) {
+  if (e.isTouchOver) return (!e.changedTouches[0] || e.changedTouches[0].pageY < 0) ? 0 : e.changedTouches[0].pageY;
   return (!e.pageY || e.pageY < 0) ? 0 : e.pageY;
 };
 
